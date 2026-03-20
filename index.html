@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Finanzas">
+  <meta name="theme-color" id="themeMetaColor" content="#0d0d1a">
+  <title>Finanzas Personales</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    /* ── TEMAS ── */
+    :root {
+      --green:#34c759; --red:#ff3b30; --blue:#007aff; --yellow:#ffcc00;
+      --purple:#af52de; --orange:#ff9500; --teal:#5ac8fa;
+      --radius-lg:22px; --radius-md:16px; --radius-sm:12px;
+      --font:'Nunito',-apple-system,sans-serif;
+    }
+
+    /* iOS 26 - MODO OSCURO (Futurista) */
+    body.dark {
+      --bg:#050508;
+      --surface:rgba(255,255,255,0.06);
+      --surface2:rgba(255,255,255,0.03);
+      --border:rgba(255,255,255,0.08);
+      --shine:rgba(255,255,255,0.15);
+      --shadow:rgba(0,0,0,0.6);
+      --text:#ffffff;
+      --text2:rgba(255,255,255,0.55);
+      --header-bg:rgba(5,5,8,0.65);
+      --nav-bg:rgba(5,5,8,0.75);
+      --modal-bg:rgba(10,10,15,0.95);
+      --input-bg:rgba(255,255,255,0.05);
+      --orb1:#0ea5e9; --orb2:#8b5cf6; --orb3:#ec4899;
+      --gradient-hero:linear-gradient(135deg, rgba(14,165,233,0.3) 0%, rgba(139,92,246,0.2) 50%, rgba(236,72,153,0.15) 100%);
+    }
+
+    /* iOS 6 - MODO CLARO PREMIUM (Skeuomorfismo) */
+    body.light {
+      --bg: #d1d4d9; /* Textura lino */
+      --surface: #ffffff;
+      --surface2: #f0f0f0;
+      --border: #b1b1b1;
+      --shine: rgba(255,255,255,0.9);
+      --shadow: rgba(0,0,0,0.2);
+      --text: #222222;
+      --text2: #4c566c; /* Azul grisáceo clásico */
+      --header-bg: linear-gradient(180deg, #b0bccd 0%, #889bb3 50%, #8195af 51%, #6d84a2 100%);
+      --nav-bg: #ced3d9;
+      --modal-bg: #e0e0e0;
+      --input-bg: #ffffff;
+      --orb1:#bfdbfe; --orb2:#a7f3d0; --orb3:#fde68a;
+    }
+
+    html { height:100%; }
+    body {
+      font-family:var(--font); min-height:100dvh; background:var(--bg);
+      color:var(--text); padding-bottom:90px; overflow-x:hidden;
+      transition:background 0.3s, color 0.3s;
+    }
+
+    /* BACKGROUND ORBS */
+    .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .orb { position:absolute; border-radius:50%; filter:blur(80px); animation:drift 18s ease-in-out infinite; opacity:0.4; }
+    .orb1 { width:400px; height:400px; top:-50px; left:-50px; background:var(--orb1); }
+    .orb2 { width:300px; height:300px; top:30%; right:-50px; background:var(--orb2); }
+    @keyframes drift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-30px)} }
+
+    /* HEADER & SWITCH */
+    .header {
+      position:sticky; top:0; z-index:100; padding:12px 18px;
+      background:var(--header-bg); border-bottom:1px solid var(--border);
+      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    }
+    body.light .header { 
+      border-bottom:1px solid #2d3642; 
+      box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset;
+    }
+    .header-inner { display:flex; justify-content:space-between; align-items:center; }
+    .header-title { font-size:1.1rem; font-weight:800; color:white; text-shadow: 0 -1px 0 rgba(0,0,0,0.4); }
+    
+    .theme-switch {
+      width: 54px; height: 28px; background: #bdc3c7; border-radius: 20px;
+      position: relative; cursor: pointer; border: 1px solid rgba(0,0,0,0.2);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); transition: 0.3s;
+    }
+    .theme-switch::after {
+      content: '☀️'; position: absolute; top: 2px; left: 2px;
+      width: 22px; height: 22px; background: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15);
+    }
+    body.dark .theme-switch { background: #34c759; }
+    body.dark .theme-switch::after { content: '🌙'; transform: translateX(26px); }
+
+    /* CARDS */
+    .hero-card {
+      margin:15px; border-radius:var(--radius-lg); padding:25px;
+      background:var(--gradient-hero); border:1px solid var(--border);
+      box-shadow:0 10px 30px var(--shadow); position:relative; z-index:1;
+    }
+    body.light .hero-card {
+      background: white; border: 1px solid #b1b1b1;
+      border-bottom: 2px solid #a0a0a0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .hero-amount { font-size:2.8rem; font-weight:800; letter-spacing:-1px; }
+    
+    .cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 15px; }
+    .mini-card {
+      background:var(--surface); border:1px solid var(--border);
+      padding:15px; border-radius:var(--radius-md); position:relative;
+    }
+    body.light .mini-card { border-bottom: 2px solid #b1b1b1; }
+    
+    /* NAV BAR */
+    .nav {
+      position:fixed; bottom:0; left:0; right:0; height:75px;
+      background:var(--nav-bg); border-top:1px solid var(--border);
+      display:flex; justify-content:space-around; align-items:center; z-index:200;
+    }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--text2); font-size:0.7rem; font-weight:700; text-decoration:none; }
+    .nav-item.active { color:var(--blue); }
+    .nav-icon { font-size:1.4rem; }
+
+    /* MODAL */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.6);
+      display:none; align-items:center; justify-content:center; z-index:1000;
+      padding:20px;
+    }
+    .modal-overlay.active { display:flex; }
+    .modal {
+      width:100%; max-width:400px; background:var(--modal-bg);
+      border-radius:var(--radius-lg); padding:25px; border:1px solid var(--border);
+    }
+    input {
+      width:100%; padding:12px; margin:10px 0; border-radius:10px;
+      border:1px solid var(--border); background:var(--input-bg); color:var(--text);
+      font-family:var(--font); font-size:1rem;
+    }
+    .btn-save {
+      width:100%; padding:14px; background:var(--blue); color:white;
+      border:none; border-radius:12px; font-weight:800; margin-top:10px;
+    }
+
+    .section { display:none; padding-top:10px; }
+    .section.active { display:block; }
+  </style>
+</head>
+<body class="dark"> <div class="bg-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+  </div>
+
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <h1 class="header-title">Finanzas</h1>
+        <div id="currentMonth" style="font-size: 0.7rem; opacity: 0.8; font-weight: 600; color: white;">Marzo 2024</div>
+      </div>
+      <div class="theme-switch" onclick="toggleTheme()"></div>
+    </div>
+  </header>
+
+  <main class="content">
+    <section id="home" class="section active">
+      <div class="hero-card">
+        <div style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; opacity: 0.7; margin-bottom: 5px;">Balance Total</div>
+        <div class="hero-amount" id="mainBalance">$0</div>
+        <div style="font-size: 0.8rem; margin-top: 10px; font-weight: 600;" id="heroSub">Cargando datos...</div>
+      </div>
+
+      <div class="cards-grid">
+        <div class="mini-card" onclick="openModal('ingreso')">
+          <div style="color: var(--green); font-size: 1.2rem; font-weight: 800;" id="totalIngresos">$0</div>
+          <div style="font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: var(--text2);">Ingresos</div>
+        </div>
+        <div class="mini-card" onclick="openModal('gasto')">
+          <div style="color: var(--red); font-size: 1.2rem; font-weight: 800;" id="totalGastos">$0</div>
+          <div style="font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: var(--text2);">Gastos</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="nav">
+    <a href="#" class="nav-item active" onclick="showSection('home')">
+      <span class="nav-icon">🏠</span>
+      <span>Inicio</span>
+    </a>
+    <a href="#" class="nav-item" onclick="openModal('gasto')">
+      <span class="nav-icon">➕</span>
+      <span>Nuevo</span>
+    </a>
+  </nav>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h2 id="modalTitle" style="margin-bottom: 15px;">Añadir</h2>
+      <input type="text" id="itemName" placeholder="Concepto (ej. Alquiler)">
+      <input type="number" id="itemValue" placeholder="Monto (ej. 500)">
+      <button class="btn-save" onclick="saveItem()">Guardar</button>
+      <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text2); margin-top:15px; font-weight:700;">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+    let currentType = 'ingreso';
+
+    // ── GESTIÓN DE TEMAS ──
+    function toggleTheme() {
+      const body = document.body;
+      const isDark = body.classList.contains('dark');
+      
+      if (isDark) {
+        body.classList.replace('dark', 'light');
+        localStorage.setItem('theme', 'light');
+        updateStatusBar('#6d84a2');
+      } else {
+        body.classList.replace('light', 'dark');
+        localStorage.setItem('theme', 'dark');
+        updateStatusBar('#050508');
+      }
+    }
+
+    function updateStatusBar(color) {
+      document.getElementById('themeMetaColor').setAttribute('content', color);
+    }
+
+    // ── LÓGICA DE LA APP ──
+    function openModal(type) {
+      currentType = type;
+      document.getElementById('modalTitle').textContent = type === 'ingreso' ? 'Nuevo Ingreso' : 'Nuevo Gasto';
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.getElementById('itemName').value = '';
+      document.getElementById('itemValue').value = '';
+    }
+
+    function saveItem() {
+      const name = document.getElementById('itemName').value;
+      const value = parseFloat(document.getElementById('itemValue').value) || 0;
+      if (!name) return alert('Pon un nombre');
+
+      const data = JSON.parse(localStorage.getItem('finanzas_data') || '[]');
+      data.push({ name, value, type: currentType, date: new Date() });
+      localStorage.setItem('finanzas_data', JSON.stringify(data));
+      
+      closeModal();
+      updateUI();
+    }
+
+    function updateUI() {
+      const data = JSON.parse(localStorage.getItem('finanzas_data') || '[]');
+      let ing = 0, gas = 0;
+      
+      data.forEach(item => {
+        if (item.type === 'ingreso') ing += item.value;
+        else gas += item.value;
+      });
+
+      document.getElementById('totalIngresos').textContent = `$${ing.toLocaleString()}`;
+      document.getElementById('totalGastos').textContent = `$${gas.toLocaleString()}`;
+      document.getElementById('mainBalance').textContent = `$${(ing - gas).toLocaleString()}`;
+      document.getElementById('heroSub').textContent = `${data.length} movimientos registrados`;
+    }
+
+    // ── INICIALIZACIÓN ──
+    window.onload = () => {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.body.className = savedTheme;
+      updateUI();
+      
+      // Registrar Service Worker para PWA
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      }
+    };
+  </script>
+</body>
+</html>
