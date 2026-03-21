@@ -1197,6 +1197,15 @@
   document.body.classList.toggle('light', !isDark);
   document.getElementById('hdr-theme').textContent = isDark ? '🌙' : '☀️';
   document.getElementById('themeMetaColor').content = isDark ? '#000000' : '#e8e4dc';
+  
+  // Forzar color de barra Android
+  if (window.AndroidFullScreen) {
+    window.AndroidFullScreen.setSystemUiVisibility(
+      window.AndroidFullScreen.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+      window.AndroidFullScreen.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+      window.AndroidFullScreen.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+    );
+  }
 }
 
   function toggleTheme() {
