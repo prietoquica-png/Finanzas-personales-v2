@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Finanzas">
+  <meta name="theme-color" id="themeMetaColor" content="#0d0d1a">
+  <title>Finanzas Personales</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    /* ── THEMES ── */
+    :root {
+      --green:#34c759; --red:#ff3b30; --blue:#007aff; --yellow:#ffcc00;
+      --purple:#af52de; --orange:#ff9500; --teal:#5ac8fa;
+      --radius-lg:22px; --radius-md:16px; --radius-sm:12px;
+      --font:'Nunito',-apple-system,sans-serif;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MODO OSCURO - iOS 26 (Futurista, Translúcido, Neón)
+       ═══════════════════════════════════════════════════════════════ */
+    body.dark {
+      --bg:#050508;
+      --surface:rgba(255,255,255,0.06);
+      --surface2:rgba(255,255,255,0.03);
+      --border:rgba(255,255,255,0.08);
+      --shine:rgba(255,255,255,0.15);
+      --shadow:rgba(0,0,0,0.6);
+      --text:#ffffff;
+      --text2:rgba(255,255,255,0.55);
+      --text3:rgba(255,255,255,0.25);
+      
+      /* iOS 26: Header ultra-translúcido */
+      --header-bg:rgba(5,5,8,0.65);
+      --nav-bg:rgba(5,5,8,0.75);
+      
+      --modal-bg:rgba(10,10,15,0.95);
+      --input-bg:rgba(255,255,255,0.05);
+      --item-hover:rgba(255,255,255,0.08);
+      
+      /* Orbs iOS 26: Neón sutiles */
+      --orb1:#0ea5e9;
+      --orb2:#8b5cf6;
+      --orb3:#ec4899;
+      
+      /* Gradientes iOS 26 */
+      --gradient-hero:linear-gradient(135deg, 
+        rgba(14,165,233,0.3) 0%, 
+        rgba(139,92,246,0.2) 50%, 
+        rgba(236,72,153,0.15) 100%);
+      --gradient-card:linear-gradient(145deg, 
+        rgba(255,255,255,0.08) 0%, 
+        rgba(255,255,255,0.02) 100%);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MODO CLARO - iOS 6 (Skeuomorfismo, Texturas, Colores cálidos)
+       ═══════════════════════════════════════════════════════════════ */
+    body.light {
+      /* Fondo texturizado iOS 6 - lino/beige */
+      --bg:#e8e4dc;
+      --surface:#f5f3ef;
+      --surface2:#ebe8e2;
+      
+      /* Bordes iOS 6: definidos con sombras internas */
+      --border:#c8c4bc;
+      --shine:rgba(255,255,255,0.9);
+      --shadow:rgba(0,0,0,0.15);
+      
+      /* Texto iOS 6: negro suave */
+      --text:#2c2c2c;
+      --text2:#5a5a5a;
+      --text3:#8a8a8a;
+      
+      /* Header iOS 6: degradado metálico plateado */
+      --header-bg:linear-gradient(180deg, 
+        #e0e0e0 0%, 
+        #d0d0d0 50%, 
+        #c0c0c0 51%, 
+        #d5d5d5 100%);
+      
+      /* Nav iOS 6: igual que header, textura metálica */
+      --nav-bg:linear-gradient(180deg, 
+        #e8e8e8 0%, 
+        #d8d8d8 50%, 
+        #c8c8c8 51%, 
+        #e0e0e0 100%);
+      
+      --modal-bg:#f0eee8;
+      --input-bg:#ffffff;
+      --item-hover:rgba(0,0,0,0.03);
+      
+      /* Orbs iOS 6: cálidos, suaves */
+      --orb1:#60a5fa;
+      --orb2:#34d399;
+      --orb3:#fbbf24;
+      
+      /* Colores iOS 6: más cálidos y saturados */
+      --teal:#0066cc;
+      --blue:#0055bb;
+      --green:#2d8a3e;
+      --red:#c41e3a;
+      --yellow:#b8860b;
+      --orange:#d2691e;
+      --purple:#6b2c91;
+    }
+
+    html { height:100%; }
+    body {
+      font-family:var(--font); min-height:100dvh; background:var(--bg);
+      color:var(--text); padding-bottom:90px; overflow-x:hidden;
+      transition:background 0.3s, color 0.3s;
+    }
+
+    /* ── BACKGROUND ORBS ── */
+    .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .orb { position:absolute; border-radius:50%; filter:blur(80px); animation:drift 18s ease-in-out infinite; }
+    .orb1 { width:420px; height:420px; top:-100px; left:-80px; animation-duration:20s; }
+    .orb2 { width:320px; height:320px; top:30%; right:-60px; animation-duration:14s; animation-delay:-6s; }
+    .orb3 { width:280px; height:280px; bottom:100px; left:10%; animation-duration:16s; animation-delay:-10s; }
+    
+    /* Orbs iOS 26 (modo oscuro) - Neón */
+    body.dark .orb1 { background:radial-gradient(circle,var(--orb1),#3b0764); opacity:0.4; }
+    body.dark .orb2 { background:radial-gradient(circle,var(--orb2),#1e3a8a); opacity:0.35; }
+    body.dark .orb3 { background:radial-gradient(circle,var(--orb3),#7c2d12); opacity:0.3; }
+    
+    /* Orbs iOS 6 (modo claro) - Cálidos, difuminados */
+    body.light .orb1 { background:radial-gradient(circle,#bfdbfe,#ddd6fe); opacity:0.6; }
+    body.light .orb2 { background:radial-gradient(circle,#a7f3d0,#bfdbfe); opacity:0.5; }
+    body.light .orb3 { background:radial-gradient(circle,#fde68a,#fecaca); opacity:0.5; }
+    
+    @keyframes drift {
+      0%,100% { transform:translate(0,0) scale(1); }
+      33%      { transform:translate(30px,-40px) scale(1.08); }
+      66%      { transform:translate(-20px,30px) scale(0.94); }
+    }
+
+    /* ── GLASS ── */
+    .glass {
+      background:var(--surface);
+      backdrop-filter:blur(28px) saturate(180%);
+      -webkit-backdrop-filter:blur(28px) saturate(180%);
+      border:1px solid var(--border);
+      box-shadow:0 8px 32px var(--shadow), inset 0 1px 0 var(--shine);
+    }
+
+    /* iOS 6 Glass: Efecto "papel" con sombra realista */
+    body.light .glass {
+      background:var(--surface);
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+      border:1px solid var(--border);
+      border-bottom:2px solid #b8b4ac;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.1),
+        0 4px 8px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.8),
+        inset 0 -1px 0 rgba(0,0,0,0.05);
+      border-radius:12px;
+    }
+
+    .content { position:relative; z-index:1; }
+
+    /* ── HEADER ── */
+    .header {
+      position:sticky; top:0; z-index:100; padding:14px 18px 10px;
+      background:var(--header-bg);
+      backdrop-filter:blur(40px) saturate(200%);
+      -webkit-backdrop-filter:blur(40px) saturate(200%);
+      border-bottom:1px solid var(--border);
+      transition:background 0.3s;
+    }
+
+    /* iOS 6 Header: Skeuomorfismo metálico */
+    body.light .header {
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+      border-bottom:1px solid #a0a0a0;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.6) inset,
+        0 -1px 0 rgba(0,0,0,0.1) inset,
+        0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .header-inner { display:flex; justify-content:space-between; align-items:center; }
+    .header-title { font-size:1.05rem; font-weight:800; letter-spacing:-0.01em; }
+    
+    /* iOS 6: Título con sombra de texto */
+    body.light .header-title {
+      color:#333;
+      text-shadow:0 1px 0 rgba(255,255,255,0.8);
+    }
+    
+    .header-month { font-size:0.72rem; color:var(--text2); margin-top:2px; font-weight:600; }
+    .header-badge {
+      font-size:0.72rem; font-weight:700; padding:5px 12px; border-radius:100px;
+      background:var(--input-bg); border:1px solid var(--border); color:var(--text2);
+    }
+
+    /* iOS 6 Badge: Botón realista */
+    body.light .header-badge {
+      background:linear-gradient(180deg, #f8f8f8, #e8e8e8);
+      border:1px solid #a0a0a0;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.8) inset,
+        0 1px 2px rgba(0,0,0,0.1);
+      color:#555;
+      text-shadow:0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    /* ── HERO ── */
+    .hero-card {
+      margin:14px 14px 0; border-radius:var(--radius-lg); padding:26px 22px 22px;
+      position:relative; overflow:hidden;
+      background:var(--gradient-hero);
+      backdrop-filter:blur(40px) saturate(200%);
+      -webkit-backdrop-filter:blur(40px) saturate(200%);
+      border:1px solid rgba(255,255,255,0.20);
+      box-shadow:0 12px 48px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.38);
+      animation:slideDown 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    /* iOS 6 Hero: Tarjeta realista con textura */
+    body.light .hero-card {
+      background:linear-gradient(145deg, #faf8f5 0%, #f0ece5 100%);
+      border:1px solid #c8c4bc;
+      border-bottom:2px solid #b8b4ac;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.1),
+        0 8px 16px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+    }
+
+    @keyframes slideDown { from{opacity:0;transform:translateY(-16px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+    .hero-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent); }
+    
+    /* iOS 6: Brillo superior metálico */
+    body.light .hero-card::before {
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent);
+      height:2px;
+    }
+
+    .quincena-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(255,149,0,0.2); border:1px solid rgba(255,149,0,0.4); color:var(--orange); font-size:0.65rem; font-weight:800; padding:3px 9px; border-radius:100px; margin-bottom:8px; }
+    
+    /* iOS 6 Badge: Estilo botón real */
+    body.light .quincena-badge {
+      background:linear-gradient(180deg, #ffd700, #ffb800);
+      border:1px solid #cc9000;
+      color:#5a4a00;
+      text-shadow:0 1px 0 rgba(255,255,255,0.4);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.6) inset,
+        0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    .hero-label { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text2); margin-bottom:7px; }
+    .hero-amount { font-size:3rem; font-weight:800; letter-spacing:-0.04em; line-height:1; text-shadow:none; color:#ff3b30; }color:#ff3b30; }color:var(--text); }
+    
+    /* iOS 6: Monto sin sombra de texto, más limpio */
+    body.light .hero-amount {
+      text-shadow:none;
+      color:#2c2c2c;
+    }
+
+    .hero-sub { font-size:0.76rem; color:var(--text2); margin-top:9px; font-weight:600; }
+    .hero-icon-bg { position:absolute; right:-20px; bottom:-20px; font-size:110px; opacity:0.05; pointer-events:none; }
+
+    /* ── MINI CARDS ── */
+    .cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; padding:9px 14px 0; }
+    .mini-card {
+      border-radius:var(--radius-md); padding:14px 13px; position:relative;
+      overflow:hidden; cursor:pointer; transition:transform 0.15s, box-shadow 0.15s;
+      animation:fadeUp 0.4s ease both;
+    }
+    .mini-card:active { transform:scale(0.96); }
+
+    /* iOS 6 Mini Cards: Efecto 3D realista */
+    body.light .mini-card {
+      background:linear-gradient(145deg, #faf8f5, #f0ece5);
+      border:1px solid #c8c4bc;
+      border-bottom:2px solid #b8b4ac;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.1),
+        0 4px 8px rgba(0,0,0,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    body.light .mini-card:active {
+      transform:translateY(2px) scale(0.98);
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    .mini-card .mc-icon {
+      width:36px; height:36px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center; font-size:1.2rem;
+      margin-bottom:9px; position:relative; overflow:hidden;
+      box-shadow:0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    /* iOS 6 Iconos: Más planos pero con relieve */
+    body.light .mini-card .mc-icon {
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        inset 0 -1px 0 rgba(0,0,0,0.1);
+    }
+
+    .mc-icon::after { content:''; position:absolute; top:0; left:0; right:0; height:50%; background:linear-gradient(180deg,rgba(255,255,255,0.45),transparent); border-radius:10px 10px 0 0; }
+    
+    /* iOS 6: Gradiente más sutil */
+    body.light .mc-icon::after {
+      background:linear-gradient(180deg,rgba(255,255,255,0.6),transparent);
+    }
+
+    .mc-icon.green  { background:linear-gradient(160deg,#5eea7e,#1da840); }
+    .mc-icon.red    { background:linear-gradient(160deg,#ff6b63,#e8150a); }
+    .mc-icon.blue   { background:linear-gradient(160deg,#4da6ff,#0060e0); }
+    .mc-icon.purple { background:linear-gradient(160deg,#c97cf5,#9430cc); }
+
+    /* iOS 6: Colores más cálidos */
+    body.light .mc-icon.green  { background:linear-gradient(160deg,#5cb85c,#449d44); }
+    body.light .mc-icon.red    { background:linear-gradient(160deg,#d9534f,#c9302c); }
+    body.light .mc-icon.blue   { background:linear-gradient(160deg,#5bc0de,#46b8da); }
+    body.light .mc-icon.purple { background:linear-gradient(160deg,#9b59b6,#8e44ad); }
+
+    .mini-card .mc-val { font-size:1.2rem; font-weight:800; letter-spacing:-0.02em; }
+    .mini-card .mc-lbl { font-size:0.66rem; color:var(--text2); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-top:2px; }
+
+    .mini-card.green-tint  { background:linear-gradient(145deg,rgba(52,199,89,0.18),rgba(52,199,89,0.07)); border:1px solid rgba(52,199,89,0.22); }
+    .mini-card.red-tint    { background:linear-gradient(145deg,rgba(255,59,48,0.18),rgba(255,59,48,0.07)); border:1px solid rgba(255,59,48,0.22); }
+    .mini-card.blue-tint   { background:linear-gradient(145deg,rgba(0,122,255,0.18),rgba(0,122,255,0.07)); border:1px solid rgba(0,122,255,0.22); }
+    .mini-card.purple-tint { background:linear-gradient(145deg,rgba(175,82,222,0.18),rgba(175,82,222,0.07)); border:1px solid rgba(175,82,222,0.22); }
+
+    /* iOS 6: Tints más sutiles */
+    body.light .mini-card.green-tint  { background:linear-gradient(145deg,rgba(92,184,92,0.15),rgba(92,184,92,0.05)); border:1px solid rgba(92,184,92,0.3); }
+    body.light .mini-card.red-tint    { background:linear-gradient(145deg,rgba(217,83,79,0.15),rgba(217,83,79,0.05)); border:1px solid rgba(217,83,79,0.3); }
+    body.light .mini-card.blue-tint   { background:linear-gradient(145deg,rgba(91,192,222,0.15),rgba(91,192,222,0.05)); border:1px solid rgba(91,192,222,0.3); }
+    body.light .mini-card.purple-tint { background:linear-gradient(145deg,rgba(155,89,182,0.15),rgba(155,89,182,0.05)); border:1px solid rgba(155,89,182,0.3); }
+
+    /* ── BREAKDOWN ── */
+    .breakdown-card { margin:9px 14px; border-radius:var(--radius-lg); padding:16px 16px 8px; animation:fadeUp 0.4s 0.2s ease both; }
+    
+    /* iOS 6 Breakdown: Papel realista */
+    body.light .breakdown-card {
+      background:linear-gradient(145deg, #faf8f5, #f0ece5);
+      border:1px solid #c8c4bc;
+      border-bottom:2px solid #b8b4ac;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    .bc-title { font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text2); margin-bottom:12px; }
+    .bc-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+    .bc-row:last-child { border-bottom:none; padding-bottom:8px; }
+    .bc-left { display:flex; align-items:center; gap:9px; }
+    .bc-icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.95rem; position:relative; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4); }
+    .bc-icon::after { content:''; position:absolute; top:0; left:0; right:0; height:50%; background:linear-gradient(180deg,rgba(255,255,255,0.38),transparent); border-radius:8px 8px 0 0; }
+    .bc-name { font-size:0.86rem; font-weight:600; }
+    .bc-val { font-size:0.9rem; font-weight:800; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── SECTIONS ── */
+    .section { display:none; padding:13px 14px; }
+    .section.active { display:block; animation:fadeUp 0.3s ease both; }
+    .section-title { display:flex; align-items:center; gap:9px; font-size:1rem; font-weight:800; margin-bottom:13px; }
+    .section-title .s-icon { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.15rem; position:relative; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.5); }
+    .s-icon::after { content:''; position:absolute; top:0; left:0; right:0; height:50%; background:linear-gradient(180deg,rgba(255,255,255,0.38),transparent); border-radius:10px 10px 0 0; }
+
+    /* ── GLASS CARD ── */
+    .g-card { border-radius:var(--radius-lg); margin-bottom:11px; overflow:hidden; }
+    
+    /* iOS 6 G-Card: Efecto papel */
+    body.light .g-card {
+      background:linear-gradient(145deg, #faf8f5, #f0ece5);
+      border:1px solid #c8c4bc;
+      border-bottom:2px solid #b8b4ac;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    .g-card-header { display:flex; justify-content:space-between; align-items:center; padding:13px 15px 9px; border-bottom:1px solid var(--border); }
+    .g-card-header-title { font-size:0.84rem; font-weight:700; }
+    .g-card-header-total { font-size:0.84rem; font-weight:800; }
+
+    /* ── ITEMS ── */
+    .item { display:flex; align-items:center; gap:9px; padding:11px 15px; border-bottom:1px solid var(--border); transition:background 0.15s; }
+    .item:last-of-type { border-bottom:none; }
+    .item:active { background:var(--item-hover); }
+    .item-name { flex:1; font-size:0.88rem; font-weight:600; transition:all 0.2s; }
+    .item-name.paid { text-decoration:line-through; color:var(--text3); }
+    .item-amount { font-size:0.86rem; font-weight:700; min-width:88px; text-align:right; transition:all 0.2s; }
+    .item-amount.paid { color:var(--text3) !important; }
+    body.light .item-name.paid { color:rgba(0,0,0,0.38); }
+    body.light .item-amount.paid { color:rgba(0,0,0,0.38) !important; }
+
+    /* ── PAID CHECKBOX (iOS 6 style) ── */
+    .paid-check {
+      width:26px; height:26px; border-radius:8px; flex-shrink:0; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; font-size:0.85rem;
+      border:none; transition:all 0.2s; position:relative; overflow:hidden;
+      box-shadow:0 2px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+    .paid-check.unchecked { background:linear-gradient(160deg,#3a3a4a,#25252f); color:transparent; }
+    .paid-check.checked   { background:linear-gradient(160deg,#5eea7e,#1da840); color:#fff; }
+    .paid-check::after { content:''; position:absolute; top:0; left:0; right:0; height:50%; background:linear-gradient(180deg,rgba(255,255,255,0.35),transparent); border-radius:8px 8px 0 0; }
+
+    /* iOS 6 Checkbox: Botón realista */
+    body.light .paid-check.unchecked {
+      background:linear-gradient(180deg, #e8e8e8, #d0d0d0);
+      border:1px solid #a0a0a0;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.8) inset,
+        0 1px 2px rgba(0,0,0,0.15);
+    }
+    body.light .paid-check.checked {
+      background:linear-gradient(180deg, #5cb85c, #449d44);
+      border:1px solid #398439;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .btn-icon { width:30px; height:30px; border:none; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.85rem; transition:all 0.15s; flex-shrink:0; }
+    .btn-icon.edit   { background:rgba(0,122,255,0.18); color:var(--blue); }
+    .btn-icon.delete { background:rgba(255,59,48,0.18); color:var(--red); }
+    .btn-icon:active { transform:scale(0.88); }
+
+    /* iOS 6 Botones de icono: Realistas */
+    body.light .btn-icon.edit {
+      background:linear-gradient(180deg, #5bc0de, #46b8da);
+      border:1px solid #31b0d5;
+      color:white;
+      text-shadow:0 1px 1px rgba(0,0,0,0.2);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 1px 2px rgba(0,0,0,0.15);
+    }
+    body.light .btn-icon.delete {
+      background:linear-gradient(180deg, #d9534f, #c9302c);
+      border:1px solid #ac2925;
+      color:white;
+      text-shadow:0 1px 1px rgba(0,0,0,0.2);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    .btn-add { width:100%; padding:12px 15px; background:var(--input-bg); border:1.5px dashed var(--border); border-radius:var(--radius-sm); color:var(--text2); font-size:0.86rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:2px; transition:all 0.2s; font-family:var(--font); }
+    .btn-add:active { opacity:0.7; }
+
+    /* iOS 6 Botón agregar: Estilo realista */
+    body.light .btn-add {
+      background:linear-gradient(180deg, #f8f8f8, #e8e8e8);
+      border:1.5px dashed #a0a0a0;
+      color:#666;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.8) inset,
+        0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .empty-state { text-align:center; padding:28px 20px; color:var(--text3); font-size:0.8rem; font-weight:600; }
+    .empty-state .e-icon { font-size:2.2rem; margin-bottom:8px; opacity:0.4; }
+
+    /* ── PROJ ── */
+    .proj-header-card { border-radius:var(--radius-lg); padding:18px; margin-bottom:11px; background:linear-gradient(145deg,rgba(0,122,255,0.2),rgba(175,82,222,0.13)); border:1px solid rgba(0,122,255,0.28); box-shadow:0 8px 32px rgba(0,122,255,0.12); }
+    
+    /* iOS 6 Proyección: Estilo tarjeta realista */
+    body.light .proj-header-card {
+      background:linear-gradient(145deg, #e8f4f8, #d0e8f0);
+      border:1px solid #a0c0d0;
+      border-bottom:2px solid #90b0c0;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    body.light .proj-item { background:rgba(0,60,180,0.1); border-color:rgba(0,60,180,0.2); }
+    body.light .proj-item.full { background:rgba(0,60,180,0.15); }
+    body.light .proj-cmp { background:rgba(0,0,0,0.05); }
+    
+    .proj-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(0,122,255,0.28); border:1px solid rgba(0,122,255,0.45); color:#fff; padding:3px 10px; border-radius:100px; font-size:0.63rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:13px; }
+    
+    /* iOS 6 Badge proyección */
+    body.light .proj-badge {
+      background:linear-gradient(180deg, #5bc0de, #46b8da);
+      border:1px solid #31b0d5;
+      color:white;
+      text-shadow:0 1px 1px rgba(0,0,0,0.2);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    .proj-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+    .proj-item { background:rgba(0,122,255,0.10); border:1px solid rgba(0,122,255,0.18); border-radius:var(--radius-sm); padding:13px; text-align:center; }
+    .proj-item.full { grid-column:1/-1; background:rgba(0,122,255,0.16); }
+    .proj-item-lbl { font-size:0.63rem; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; font-weight:700; }
+    body.light .proj-item-lbl { color:rgba(0,0,60,0.6); }
+    body.light .proj-item-val { color:#004aaa; }
+    .proj-item-val { font-size:1.2rem; font-weight:800; color:var(--teal); }
+    .proj-item-val.lg { font-size:1.6rem; }
+    .proj-cmp { margin-top:13px; padding:13px; background:var(--input-bg); border-radius:var(--radius-sm); }
+    .proj-cmp-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); font-size:0.83rem; }
+    .proj-cmp-row:last-child { border-bottom:none; }
+    .proj-cmp-lbl { color:var(--text2); font-weight:600; }
+    .proj-cmp-val { font-weight:800; }
+    .proj-cmp-val.pos { color:var(--green); } .proj-cmp-val.neg { color:var(--red); }
+    .proj-cmp-val.warn { color:var(--yellow); } .proj-cmp-val.blue { color:var(--teal); }
+    .info-card { border-radius:var(--radius-md); padding:15px; margin-bottom:11px; }
+    .info-card p { font-size:0.83rem; color:var(--text2); line-height:1.65; }
+    .info-card ul { padding-left:17px; font-size:0.83rem; color:var(--text2); line-height:1.9; margin-top:9px; }
+    .rec-card { border-radius:var(--radius-md); padding:15px; }
+    #recommendations42 p { font-size:0.83rem; line-height:1.6; }
+    #recommendations42 ul { font-size:0.83rem; color:var(--text2); line-height:1.8; padding-left:17px; margin-top:8px; }
+    .period-btn { flex:1; padding:9px 7px; background:var(--input-bg); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text2); font-family:var(--font); font-size:0.8rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
+    .period-btn.active { background:rgba(0,122,255,0.22); border-color:rgba(0,122,255,0.45); color:var(--teal); }
+
+    /* iOS 6 Period buttons: Realistas */
+    body.light .period-btn {
+      background:linear-gradient(180deg, #f8f8f8, #e8e8e8);
+      border:1px solid #a0a0a0;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.8) inset,
+        0 1px 2px rgba(0,0,0,0.1);
+    }
+    body.light .period-btn.active {
+      background:linear-gradient(180deg, #5bc0de, #46b8da);
+      border:1px solid #31b0d5;
+      color:white;
+      text-shadow:0 1px 1px rgba(0,0,0,0.2);
+    }
+
+    /* ── CALENDAR SECTION ── */
+    .cal-year-label { font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:var(--text2); margin-bottom:10px; padding-left:2px; }
+    .months-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:16px; }
+    .month-card {
+      border-radius:var(--radius-md); padding:12px 10px; text-align:center;
+      cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden;
+    }
+    .month-card:active { transform:scale(0.95); }
+    .month-card.current-month { border:2px solid var(--blue) !important; }
+    .month-card.active-month { background:linear-gradient(145deg,rgba(0,122,255,0.3),rgba(0,122,255,0.15)) !important; }
+    .month-card .mc-name { font-size:0.82rem; font-weight:800; margin-bottom:4px; }
+    .month-card .mc-balance { font-size:0.68rem; font-weight:700; }
+    .month-card .mc-balance.pos { color:var(--green); }
+    .month-card .mc-balance.neg { color:var(--red); }
+    .month-card .mc-balance.zero { color:var(--text3); }
+
+    /* iOS 6 Month cards: Realistas */
+    body.light .month-card {
+      background:linear-gradient(145deg, #faf8f5, #f0ece5);
+      border:1px solid #c8c4bc;
+      border-bottom:2px solid #b8b4ac;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+    body.light .month-card.current-month {
+      border:2px solid #5bc0de !important;
+      box-shadow:
+        0 0 0 1px rgba(91,192,222,0.3),
+        0 2px 4px rgba(0,0,0,0.1);
+    }
+    body.light .month-card.active-month {
+      background:linear-gradient(145deg, #d0e8f0, #b8d8e8) !important;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay { position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.55); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); display:none; align-items:flex-end; justify-content:center; }
+    .modal-overlay.active { display:flex; }
+    .modal { width:100%; max-width:500px; background:var(--modal-bg); backdrop-filter:blur(40px) saturate(180%); -webkit-backdrop-filter:blur(40px) saturate(180%); border:1px solid var(--border); border-radius:28px 28px 0 0; padding:22px 19px 38px; box-shadow:0 -8px 40px var(--shadow), inset 0 1px 0 var(--shine); transform:translateY(100%); transition:transform 0.32s cubic-bezier(0.34,1.56,0.64,1); position:relative; }
+    .modal-overlay.active .modal { transform:translateY(0); }
+    .modal-handle { width:38px; height:4px; background:var(--border); border-radius:100px; margin:0 auto 18px; }
+    .modal-title { font-size:1.1rem; font-weight:800; margin-bottom:18px; }
+    .form-group { margin-bottom:13px; }
+    .form-label { font-size:0.72rem; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; display:block; }
+    .form-input { width:100%; padding:13px 15px; background:var(--input-bg); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:1rem; font-family:var(--font); font-weight:600; outline:none; transition:border-color 0.2s; }
+    .form-input:focus { border-color:var(--blue); }
+    .form-input::placeholder { color:var(--text3); }
+
+    /* iOS 6 Inputs: Realistas */
+    body.light .form-input {
+      background:#ffffff;
+      border:1px solid #a0a0a0;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.8) inset,
+        0 1px 3px rgba(0,0,0,0.1) inset;
+    }
+    body.light .form-input:focus {
+      border-color:#5bc0de;
+      box-shadow:
+        0 0 0 3px rgba(91,192,222,0.2),
+        0 1px 3px rgba(0,0,0,0.1) inset;
+    }
+
+    .btn-primary { width:100%; padding:15px; background:linear-gradient(160deg,#3a9eff,#0060e0); border:none; border-radius:var(--radius-md); color:#fff; font-size:1rem; font-weight:800; cursor:pointer; margin-top:7px; font-family:var(--font); box-shadow:0 4px 20px rgba(0,122,255,0.35), inset 0 1px 0 rgba(255,255,255,0.28); transition:all 0.2s; }
+    .btn-primary:active { transform:scale(0.97); opacity:0.9; }
+
+    /* iOS 6 Botón primario: Realista */
+    body.light .btn-primary {
+      background:linear-gradient(180deg, #5cb85c, #449d44);
+      border:1px solid #398439;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 4px 8px rgba(0,0,0,0.15),
+        0 2px 4px rgba(0,0,0,0.1);
+      text-shadow:0 1px 1px rgba(0,0,0,0.2);
+    }
+    body.light .btn-primary:active {
+      background:linear-gradient(180deg, #449d44, #398439);
+      transform:translateY(2px) scale(0.98);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.4) inset,
+        0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-close { position:absolute; top:18px; right:18px; width:30px; height:30px; border:none; background:var(--input-bg); border-radius:50%; color:var(--text2); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:var(--font); }
+
+    /* iOS 6 Botón cerrar: Realista */
+    body.light .btn-close {
+      background:linear-gradient(180deg, #f8f8f8, #e8e8e8);
+      border:1px solid #a0a0a0;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.8) inset,
+        0 1px 2px rgba(0,0,0,0.1);
+    }
+
+   /* ── BOTTOM NAV — iOS 6 style NEGRO ── */
+.bottom-nav {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  display:flex; justify-content:space-around; align-items:center;
+  gap:6px; padding:10px 10px 28px;
+  /* Fondo negro sólido estilo iOS 6 */
+  background: linear-gradient(180deg,
+    #2a2a2a 0%,
+    #1a1a1a 50%,
+    #0a0a0a 51%,
+    #000000 100%);
+  border-top:1px solid #444;
+  box-shadow:
+    0 -1px 0 rgba(255,255,255,0.1) inset,
+    0 -2px 10px rgba(0,0,0,0.5);
+  transition:background 0.3s;
+}
+
+    /* iOS 6 Nav: Skeuomorfismo metálico */
+    body.light .bottom-nav {
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+      border-top:1px solid #a0a0a0;
+      box-shadow:
+        0 -1px 0 rgba(255,255,255,0.6) inset,
+        0 -2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* iOS 6 rectangular pill button */
+    .nav-btn-ios {
+      flex:1; min-width:0;
+      font-family:var(--font); font-size:0.78rem; font-weight:700;
+      color:#fff; cursor:pointer; border:none;
+      padding:9px 4px; border-radius:8px;
+      position:relative; overflow:hidden;
+      text-shadow:0 1px 2px rgba(0,0,0,0.55);
+      letter-spacing:0.01em; white-space:nowrap;
+      /* iOS 6 blue metallic gradient */
+      background:linear-gradient(180deg,
+        #6aabee 0%, #4a8ed4 18%,
+        #2e72c0 50%, #1a5aaa 51%,
+        #2464b8 80%, #3578cc 100%);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.45) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 2px 0 rgba(0,0,0,0.4),
+        0 3px 8px rgba(0,0,0,0.3);
+      transition:all 0.12s;
+    }
+    .nav-btn-ios::before {
+      content:'';
+      position:absolute; top:0; left:0; right:0; height:50%;
+      background:linear-gradient(180deg,rgba(255,255,255,0.35) 0%,rgba(255,255,255,0.05) 100%);
+      border-radius:8px 8px 0 0;
+      pointer-events:none;
+    }
+    .nav-btn-ios:active {
+      background:linear-gradient(180deg,
+        #3a7abe 0%, #2a6ab0 18%,
+        #1a52a0 50%, #0e4290 51%,
+        #1a52a0 80%, #2a6ab0 100%);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 1px 0 rgba(0,0,0,0.4);
+      transform:translateY(1px);
+    }
+    .nav-btn-ios.active-nav {
+      background:linear-gradient(180deg,
+        #3a7abe 0%, #2a6ab0 18%,
+        #1a52a0 50%, #0e4290 51%,
+        #1a52a0 80%, #2a6ab0 100%);
+    }
+    /* Theme button — neutral silver when in light mode */
+    body.light .nav-btn-ios {
+      background:linear-gradient(180deg,
+        #9ab8d8 0%, #7a9ec0 18%,
+        #5a82a8 50%, #4a6e90 51%,
+        #5a7ea8 80%, #6a92bc 100%);
+    }
+    body.light .nav-btn-ios:active {
+      background:linear-gradient(180deg,
+        #7a98b8 0%, #5a80a0 18%,
+        #3a6288 50%, #2a5278 51%,
+        #3a6288 80%, #4a72a0 100%);
+    }
+
+    /* ── PERIOD DROPDOWN (now from bottom nav) ── */
+    #period-pill { font-size:0.66rem; font-weight:700; background:rgba(0,122,255,0.18); border:1px solid rgba(0,122,255,0.3); color:var(--teal); padding:3px 9px; border-radius:100px; }
+    #period-pill.quincenal { background:rgba(255,149,0,0.18); border-color:rgba(255,149,0,0.3); color:var(--orange); }
+
+    .period-menu {
+      position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+      width:calc(100% - 28px); max-width:400px; z-index:200;
+      background:var(--modal-bg);
+      backdrop-filter:blur(40px) saturate(200%);
+      -webkit-backdrop-filter:blur(40px) saturate(200%);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+      box-shadow:0 12px 40px var(--shadow), inset 0 1px 0 var(--shine);
+      animation:menuUp 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    /* iOS 6 Period menu: Realista */
+    body.light .period-menu {
+      background:linear-gradient(145deg, #faf8f5, #f0ece5);
+      border:1px solid #c8c4bc;
+      border-bottom:2px solid #b8b4ac;
+      box-shadow:
+        0 8px 24px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+    }
+
+    @keyframes menuUp { from{opacity:0;transform:translateX(-50%) translateY(16px) scale(0.96)} to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} }
+    .pm-title { font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:var(--text3); padding:10px 14px 6px; }
+    .pm-opt { width:100%; display:flex; align-items:center; gap:12px; padding:12px 14px; background:none; border:none; border-bottom:1px solid var(--border); color:var(--text); font-family:var(--font); cursor:pointer; transition:background 0.15s; text-align:left; }
+    .pm-opt:last-child { border-bottom:none; }
+    .pm-opt:active { background:var(--item-hover); }
+    .pm-opt.active { background:rgba(0,122,255,0.1); }
+    .pm-opt-icon { font-size:1.2rem; width:28px; text-align:center; flex-shrink:0; }
+    .pm-opt-text { flex:1; }
+    .pm-opt-name { font-size:0.88rem; font-weight:700; }
+    .pm-opt-desc { font-size:0.66rem; color:var(--text2); margin-top:1px; font-weight:500; }
+    .pm-check { font-size:0.88rem; color:var(--blue); font-weight:800; transition:opacity 0.2s; }
+
+    /* iOS 6 Period options: Realistas */
+    body.light .pm-opt { border-bottom:1px solid #d0d0d0; }
+    body.light .pm-opt.active {
+      background:linear-gradient(180deg, #e8f4f8, #d0e8f0);
+    }
+    body.light .pm-opt:active {
+      background:rgba(0,0,0,0.05);
+    }
+
+    /* ── iOS 26 EXCLUSIVO: EFECTOS ESPECIALES ── */
+    /* Brillo neón sutil en modo oscuro */
+    body.dark .hero-card::after {
+      content:'';
+      position:absolute;
+      top:-50%;
+      left:-50%;
+      width:200%;
+      height:200%;
+      background:radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+      pointer-events:none;
+    }
+
+    /* Efecto de borde brillante en modo oscuro */
+    body.dark .glass {
+      position:relative;
+    }
+    body.dark .glass::before {
+      content:'';
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      padding:1px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.2), transparent 50%, rgba(255,255,255,0.05));
+      -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      pointer-events:none;
+    }
+  </style>
+</head>
+<body class="dark">
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="content">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <div>
+        <div class="header-title">💰 Finanzas</div>
+        <div class="header-month" id="currentMonth">Cargando…</div>
+      </div>
+      <button class="header-badge" id="hdr-theme" onclick="toggleTheme()" style="cursor:pointer;">🌙</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero-card" id="heroCard">
+    <div id="hero-period-badge" class="quincena-badge" style="display:none;">📆</div>
+    <div class="hero-label">💸 Dinero libre para gastar</div>
+    <div class="hero-amount" id="freeMoneyAmount">$0</div>
+    <div class="hero-sub" id="freeMoneySub">Después de gastos y ahorro</div>
+    <div class="hero-icon-bg">💸</div>
+  </div>
+
+  <!-- MINI CARDS -->
+  <div class="cards-grid">
+    <div class="mini-card green-tint glass" onclick="goTo('income')" style="cursor:pointer;">
+      <div class="mc-icon green">💵</div>
+      <div class="mc-val" id="totalIncome">$0</div>
+      <div class="mc-lbl">Ingresos</div>
+    </div>
+    <div class="mini-card red-tint glass" onclick="goTo('gastos')" style="cursor:pointer;">
+      <div class="mc-icon red">📋</div>
+      <div class="mc-val" id="totalExpenses">$0</div>
+      <div class="mc-lbl">Gastos</div>
+    </div>
+    <div class="mini-card blue-tint glass" style="cursor:default;">
+      <div class="mc-icon blue">🏦</div>
+      <div class="mc-val" id="monthlySavings">$0</div>
+      <div class="mc-lbl">Ahorro Real</div>
+    </div>
+    <div class="mini-card purple-tint glass" onclick="goTo('projection42')" style="cursor:pointer;">
+      <div class="mc-icon purple">📈</div>
+      <div class="mc-val" id="savings42Percent">$0</div>
+      <div class="mc-lbl">Meta 42%</div>
+    </div>
+  </div>
+
+  <!-- BREAKDOWN -->
+  <div class="breakdown-card glass">
+    <div class="bc-title">📊 Desglose del cálculo</div>
+    <div class="bc-row">
+      <div class="bc-left"><div class="bc-icon" style="background:linear-gradient(160deg,#5eea7e,#1da840);">💵</div><span class="bc-name">Ingresos Totales</span></div>
+      <span class="bc-val" id="breakdownIncome" style="color:var(--green);">$0</span>
+    </div>
+    <div class="bc-row">
+      <div class="bc-left"><div class="bc-icon" style="background:linear-gradient(160deg,#ff6b63,#e8150a);">📋</div><span class="bc-name">Gastos Fijos</span></div>
+      <span class="bc-val" id="breakdownFixed" style="color:var(--red);">$0</span>
+    </div>
+    <div class="bc-row">
+      <div class="bc-left"><div class="bc-icon" style="background:linear-gradient(160deg,#ffe033,#e0a800);">🛒</div><span class="bc-name">Gastos Diarios</span></div>
+      <span class="bc-val" id="breakdownDaily" style="color:var(--yellow);">$0</span>
+    </div>
+    <div class="bc-row">
+      <div class="bc-left"><div class="bc-icon" style="background:linear-gradient(160deg,#4da6ff,#0060e0);">📈</div><span class="bc-name">Meta Ahorro</span></div>
+      <span class="bc-val" id="breakdownSavings" style="color:var(--blue);">$0</span>
+    </div>
+    <div class="bc-row">
+      <div class="bc-left"><div class="bc-icon" style="background:linear-gradient(160deg,#5eea7e,#1da840);">💸</div><span class="bc-name" style="font-weight:800;">Dinero libre</span></div>
+      <span class="bc-val" id="breakdownFree" style="font-size:1rem;">$0</span>
+    </div>
+  </div>
+
+  <!-- DASHBOARD (empty — hero+cards+breakdown always show) -->
+  <div class="section active" id="dashboardSection"></div>
+
+  <!-- INCOME -->
+  <div class="section" id="incomeSection">
+    <div class="section-title">
+      <div class="s-icon" style="background:linear-gradient(160deg,#5eea7e,#1da840);">💵</div>Ingresos
+    </div>
+    <div class="g-card glass">
+      <div class="g-card-header">
+        <span class="g-card-header-title">Fuentes de ingreso</span>
+        <span class="g-card-header-total" id="incomeTotal" style="color:var(--green);">$0</span>
+      </div>
+      <div id="incomeList"></div>
+      <div style="padding:9px 12px 13px;"><button class="btn-add" onclick="openModal('income')">＋ Agregar Ingreso</button></div>
+    </div>
+  </div>
+
+  <!-- GASTOS COMBINADOS (fijos + diarios en una sola vista) -->
+  <div class="section" id="gastosSection">
+    <div class="section-title">
+      <div class="s-icon" style="background:linear-gradient(160deg,#ff6b63,#e8150a);">📋</div>
+      Gastos — <span id="gastos-period-lbl" style="color:var(--teal);font-size:0.78rem;font-weight:700;">Mensual</span>
+    </div>
+    <!-- FIJOS -->
+    <div class="g-card glass">
+      <div class="g-card-header">
+        <span class="g-card-header-title">Gastos Fijos</span>
+        <span class="g-card-header-total" id="gastosFixedTotal" style="color:var(--red);">$0</span>
+      </div>
+      <div id="gastosFixedList"></div>
+      <div style="padding:9px 12px 13px;"><button class="btn-add" onclick="openModal('fixed')">＋ Agregar Gasto Fijo</button></div>
+    </div>
+    <!-- DIARIOS -->
+    <div class="g-card glass">
+      <div class="g-card-header">
+        <span class="g-card-header-title">Gastos Diarios</span>
+        <span class="g-card-header-total" id="gastosDailyTotal" style="color:var(--yellow);">$0</span>
+      </div>
+      <div id="gastosDailyList"></div>
+      <div style="padding:9px 12px 13px;"><button class="btn-add" onclick="openModal('daily')">＋ Agregar Gasto Diario</button></div>
+    </div>
+  </div>
+
+<!-- FIXED -->
+  <div class="section" id="fixedSection">
+    <div class="section-title">
+      <div class="s-icon" style="background:linear-gradient(160deg,#ff6b63,#e8150a);">📋</div>
+      Gastos Fijos — <span id="fixed-period-lbl" style="color:var(--teal);font-size:0.78rem;font-weight:700;">Mensual</span>
+    </div>
+    <div class="g-card glass">
+      <div class="g-card-header">
+        <span class="g-card-header-title">Gastos mensuales</span>
+        <span class="g-card-header-total" id="fixedTotal" style="color:var(--red);">$0</span>
+      </div>
+      <div id="fixedList"></div>
+      <div style="padding:9px 12px 13px;"><button class="btn-add" onclick="openModal('fixed')">＋ Agregar Gasto Fijo</button></div>
+    </div>
+  </div>
+
+  <!-- DAILY -->
+  <div class="section" id="dailySection">
+    <div class="section-title">
+      <div class="s-icon" style="background:linear-gradient(160deg,#ffe033,#e0a800);">🛒</div>
+      Gastos Diarios — <span id="daily-period-lbl" style="color:var(--teal);font-size:0.78rem;font-weight:700;">Mensual</span>
+    </div>
+    <div class="g-card glass">
+      <div class="g-card-header">
+        <span class="g-card-header-title">Gastos del día</span>
+        <span class="g-card-header-total" id="dailyTotal" style="color:var(--yellow);">$0</span>
+      </div>
+      <div id="dailyList"></div>
+      <div style="padding:9px 12px 13px;"><button class="btn-add" onclick="openModal('daily')">＋ Agregar Gasto Diario</button></div>
+    </div>
+  </div>
+
+  <!-- PROJECTION 42% -->
+  <div class="section" id="projection42Section">
+    <div class="section-title">
+      <div class="s-icon" style="background:linear-gradient(160deg,#4da6ff,#0060e0);">📈</div>Proyección Ahorro
+    </div>
+    <div class="g-card glass" style="margin-bottom:11px;padding:13px 15px;">
+      <div>
+        <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);margin-bottom:7px;">Meta de ahorro sobre el salario</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="range" id="savingsPctSlider" min="5" max="80" value="42" oninput="document.getElementById('savingsPctInput').value=this.value;updatePct(this.value)" style="flex:1;accent-color:var(--blue);cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:4px;background:rgba(0,122,255,0.14);border:1px solid rgba(0,122,255,0.28);border-radius:10px;padding:5px 9px;">
+            <input type="number" id="savingsPctInput" min="1" max="100" value="42" oninput="document.getElementById('savingsPctSlider').value=this.value;updatePct(this.value)" style="width:40px;background:none;border:none;color:var(--teal);font-family:var(--font);font-size:1.05rem;font-weight:800;text-align:center;outline:none;">
+            <span style="color:var(--teal);font-weight:800;">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="proj-header-card">
+      <div class="proj-badge" id="proj-pct-badge">🎯 Meta · 42% del Salario</div>
+      <div class="proj-grid">
+        <div class="proj-item full"><div class="proj-item-lbl" id="salaryBaseLbl">Salario Mensual</div><div class="proj-item-val lg" id="salaryBase">$0</div></div>
+        <div class="proj-item"><div class="proj-item-lbl" id="monthlySave42Lbl">Ahorro Mensual</div><div class="proj-item-val" id="monthlySave42">$0</div></div>
+        <div class="proj-item"><div class="proj-item-lbl">Ahorro Anual</div><div class="proj-item-val" id="yearlySave42">$0</div></div>
+        <div class="proj-item full"><div class="proj-item-lbl">Proyección 6 Meses</div><div class="proj-item-val lg" id="projection6Months42">$0</div></div>
+        <div class="proj-item full"><div class="proj-item-lbl">Proyección 1 Año</div><div class="proj-item-val lg" id="projection1Year42">$0</div></div>
+      </div>
+      <div class="proj-cmp">
+        <div class="proj-cmp-row"><span class="proj-cmp-lbl" id="idealSave42Lbl">Ahorro ideal</span><span class="proj-cmp-val blue" id="idealSave42">$0</span></div>
+        <div class="proj-cmp-row"><span class="proj-cmp-lbl" id="realSave42Lbl">Ahorro real</span><span class="proj-cmp-val" id="realSave42">$0</span></div>
+        <div class="proj-cmp-row"><span class="proj-cmp-lbl">Diferencia</span><span class="proj-cmp-val" id="difference42">$0</span></div>
+        <div class="proj-cmp-row"><span class="proj-cmp-lbl">Estado</span><span class="proj-cmp-val" id="status42">Calculando…</span></div>
+      </div>
+    </div>
+    <div id="biweekly-breakdown" class="g-card glass" style="display:none;margin-bottom:11px;">
+      <div class="g-card-header"><span class="g-card-header-title">📆 Desglose Quincenal</span></div>
+      <div style="padding:4px 0 7px;">
+        <div class="proj-cmp-row" style="padding:8px 15px;border-bottom:1px solid var(--border);"><span class="proj-cmp-lbl">Ingresos</span><span class="proj-cmp-val pos" id="bw-income">$0</span></div>
+        <div class="proj-cmp-row" style="padding:8px 15px;border-bottom:1px solid var(--border);"><span class="proj-cmp-lbl">Gastos fijos</span><span class="proj-cmp-val neg" id="bw-fixed">$0</span></div>
+        <div class="proj-cmp-row" style="padding:8px 15px;border-bottom:1px solid var(--border);"><span class="proj-cmp-lbl">Gastos diarios</span><span class="proj-cmp-val" style="color:var(--yellow);" id="bw-daily">$0</span></div>
+        <div class="proj-cmp-row" style="padding:8px 15px;border-bottom:1px solid var(--border);"><span class="proj-cmp-lbl">Ahorro meta</span><span class="proj-cmp-val blue" id="bw-save">$0</span></div>
+        <div class="proj-cmp-row" style="padding:8px 15px;"><span class="proj-cmp-lbl" style="font-weight:800;color:var(--text);">Disponible quincenal</span><span class="proj-cmp-val" style="font-size:1rem;" id="bw-free">$0</span></div>
+      </div>
+    </div>
+    <div class="g-card glass info-card">
+      <p>Ahorrar el <strong id="pct-info-label">42%</strong> de tu salario es una meta agresiva pero alcanzable.</p>
+      <ul><li>Construir fondo de emergencia sólido</li><li>Invertir en instrumentos financieros</li><li>Alcanzar libertad financiera más rápido</li></ul>
+    </div>
+    <div class="g-card glass rec-card">
+      <div class="g-card-header"><span class="g-card-header-title">🎯 Recomendaciones</span></div>
+      <div id="recommendations42" style="padding:11px 0 3px;"></div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="section" id="calendarSection">
+    <div class="section-title">
+      <div class="s-icon" style="background:linear-gradient(160deg,#ff6b63,#c0392b);">📅</div>
+      <span id="cal-year-title">2026</span>
+    </div>
+    <div class="cal-year-label">Selecciona un mes para activarlo</div>
+    <div class="months-grid" id="monthsGrid"></div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- PERIOD DROPDOWN -->
+<div id="period-menu" class="period-menu" style="display:none;">
+  <div class="pm-title">Modo de vista</div>
+  <button class="pm-opt active" id="pm-monthly" onclick="setGlobalPeriod('monthly')">
+    <span class="pm-opt-icon">📅</span>
+    <div class="pm-opt-text"><div class="pm-opt-name">Mensual</div><div class="pm-opt-desc">Vista completa del mes</div></div>
+    <span class="pm-check" id="pm-check-monthly">✓</span>
+  </button>
+  <button class="pm-opt" id="pm-q11" onclick="setGlobalPeriod('q11')">
+    <span class="pm-opt-icon">📆</span>
+    <div class="pm-opt-text"><div class="pm-opt-name">Quincena del 11</div><div class="pm-opt-desc">Del día 11 al 25</div></div>
+    <span class="pm-check" id="pm-check-q11" style="opacity:0;">✓</span>
+  </button>
+  <button class="pm-opt" id="pm-q26" onclick="setGlobalPeriod('q26')">
+    <span class="pm-opt-icon">📆</span>
+    <div class="pm-opt-text"><div class="pm-opt-name">Quincena del 26</div><div class="pm-opt-desc">Del día 26 al 10</div></div>
+    <span class="pm-check" id="pm-check-q26" style="opacity:0;">✓</span>
+  </button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="btn-close" onclick="closeModal()">×</button>
+    <h3 class="modal-title" id="modalTitle">Agregar</h3>
+    <form id="itemForm" onsubmit="saveItem(event)">
+      <input type="hidden" id="itemType">
+      <input type="hidden" id="itemIndex">
+      <div class="form-group">
+        <label class="form-label">Concepto</label>
+        <input type="text" class="form-input" id="itemName" placeholder="Ej: Salario, Arriendo…" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Valor ($)</label>
+        <input type="number" class="form-input" id="itemValue" placeholder="0" required min="0" inputmode="numeric">
+      </div>
+      <button type="submit" class="btn-primary">Guardar</button>
+    </form>
+  </div>
+</div>
+
+<!-- BOTTOM NAV — 4 iOS 6 pill buttons -->
+<nav class="bottom-nav">
+  <button class="nav-btn-ios active-nav" id="nav-home" onclick="navHome()">Inicio</button>
+  <button class="nav-btn-ios" id="nav-cal" onclick="goTo('calendar')">Calendario</button>
+  <button class="nav-btn-ios" id="nav-per" onclick="togglePeriodMenu()" id="nav-per-lbl">Mensual</button>
+  
+</nav>
+
+<script>
+  // ── STATE ─────────────────────────────────────────────────────────
+  const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const MONTH_SHORT = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+  const now = new Date();
+  let activeYear  = now.getFullYear();
+  let activeMonth = now.getMonth(); // 0-based
+
+  // Determine default period based on today's date
+  let globalPeriod = now.getDate() >= 26 ? 'q26' : 'q11';
+  let periodView   = globalPeriod === 'monthly' ? 'monthly' : 'biweekly';
+  let isDark       = true;
+  let currentSection = 'dashboard';
+
+  // Data keyed by "YYYY-MM"
+  // Each month: { income, fixed_monthly, fixed_q11, fixed_q26, daily_monthly, daily_q11, daily_q26, savingsPct }
+  let allData = {};
+  let savingsPct = 42;
+
+  function monthKey(y, m) { return `${y}-${String(m).padStart(2,'0')}`; }
+  function curKey()       { return monthKey(activeYear, activeMonth); }
+
+  function getMonth(y, m) {
+    const k = monthKey(y, m);
+    if (!allData[k]) allData[k] = emptyMonth();
+    return allData[k];
+  }
+
+  function emptyMonth() {
+    return {
+      income: [], fixed_monthly: [], fixed_q11: [], fixed_q26: [],
+      daily_monthly: [], daily_q11: [], daily_q26: []
+    };
+  }
+
+  function cur() { return getMonth(activeYear, activeMonth); }
+
+  // ── PERSIST ──────────────────────────────────────────────────────
+  function saveAll() {
+    localStorage.setItem('finanzas_all', JSON.stringify(allData));
+    localStorage.setItem('finanzas_pct', savingsPct);
+    localStorage.setItem('finanzas_theme', isDark ? 'dark' : 'light');
+    localStorage.setItem('finanzas_period', globalPeriod);
+  }
+
+  function loadAll() {
+    const raw = localStorage.getItem('finanzas_all');
+    if (raw) allData = JSON.parse(raw);
+    const pct = localStorage.getItem('finanzas_pct');
+    if (pct) savingsPct = parseInt(pct);
+    const theme = localStorage.getItem('finanzas_theme');
+    isDark = theme !== 'light';
+    const period = localStorage.getItem('finanzas_period');
+    if (period) globalPeriod = period;
+    else globalPeriod = now.getDate() >= 26 ? 'q26' : 'q11';
+    periodView = globalPeriod === 'monthly' ? 'monthly' : 'biweekly';
+  }
+
+  // ── PERIOD HELPERS ────────────────────────────────────────────────
+  function getPeriodFactor() {
+    if (globalPeriod === 'monthly') return { mult:1, label:'Mensual' };
+    if (globalPeriod === 'q11')     return { mult:0.5, label:'Quincena 11–25' };
+    return { mult:0.5, label:'Quincena 26–10' };
+  }
+
+  function getPeriodKeys() {
+    if (globalPeriod === 'q11') return { fixedKey:'fixed_q11', dailyKey:'daily_q11' };
+    if (globalPeriod === 'q26') return { fixedKey:'fixed_q26', dailyKey:'daily_q26' };
+    return { fixedKey:'fixed_monthly', dailyKey:'daily_monthly' };
+  }
+
+  function getPeriodLabel() {
+    if (globalPeriod === 'q11') return 'Quincena 11–25';
+    if (globalPeriod === 'q26') return 'Quincena 26–10';
+    return 'Mensual';
+  }
+
+  function resolveKey(type) {
+    if (type === 'fixed') return getPeriodKeys().fixedKey;
+    if (type === 'daily') return getPeriodKeys().dailyKey;
+    return type; // income
+  }
+
+  // ── FORMAT ────────────────────────────────────────────────────────
+  function fmt(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
+
+  // ── NAVIGATION ────────────────────────────────────────────────────
+  function goTo(section) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(section + 'Section').classList.add('active');
+    currentSection = section;
+
+    const isHome = section === 'dashboard';
+    document.querySelector('.hero-card').style.display       = isHome ? '' : 'none';
+    document.querySelector('.cards-grid').style.display      = isHome ? '' : 'none';
+    document.querySelector('.breakdown-card').style.display  = isHome ? '' : 'none';
+
+    // Update nav active state
+    document.querySelectorAll('.nav-btn-ios').forEach(b => b.classList.remove('active-nav'));
+    if (isHome) document.getElementById('nav-home').classList.add('active-nav');
+    if (section === 'calendar') { document.getElementById('nav-cal').classList.add('active-nav'); renderCalendar(); }
+
+    // Sync gastos section when navigating there
+    if (section === 'gastos') updateGastos();
+
+    window.scrollTo(0,0);
+  }
+
+  function navHome() { goTo('dashboard'); }
+
+  // ── THEME ─────────────────────────────────────────────────────────
+  function applyTheme() {
+  document.body.classList.toggle('dark',  isDark);
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('hdr-theme').textContent = isDark ? '🌙' : '☀️';
+  document.getElementById('themeMetaColor').content = isDark ? '#050508' : '#e8e4dc';
+}
+
+  function toggleTheme() {
+    isDark = !isDark;
+    applyTheme();
+    saveAll();
+  }
+
+  // ── PERIOD MENU ───────────────────────────────────────────────────
+  function togglePeriodMenu() {
+    const m = document.getElementById('period-menu');
+    m.style.display = m.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function setGlobalPeriod(p) {
+    globalPeriod = p;
+    periodView   = p === 'monthly' ? 'monthly' : 'biweekly';
+    document.getElementById('period-menu').style.display = 'none';
+    const labels = { monthly:'Mensual', q11:'Quincena 11', q26:'Quincena 26' };
+    document.getElementById('nav-per').textContent = labels[p];
+    ['monthly','q11','q26'].forEach(k => {
+      document.getElementById('pm-check-' + k).style.opacity = k === p ? '1' : '0';
+      document.getElementById('pm-' + k).classList.toggle('active', k === p);
+    });
+    saveAll();
+    updateAll();
+  }
+
+  document.addEventListener('click', e => {
+    const menu = document.getElementById('period-menu');
+    if (menu.style.display === 'block' && !menu.contains(e.target) && !e.target.closest('.nav-btn-ios')) {
+      menu.style.display = 'none';
+    }
+  });
+
+  // ── CALENDAR ─────────────────────────────────────────────────────
+  function renderCalendar() {
+    document.getElementById('cal-year-title').textContent = activeYear;
+    const grid = document.getElementById('monthsGrid');
+    grid.innerHTML = '';
+    for (let m = 0; m < 12; m++) {
+      const md = getMonth(activeYear, m);
+      const { mult } = getPeriodFactor();
+      const { fixedKey, dailyKey } = getPeriodKeys();
+      const income   = (md.income||[]).reduce((s,i)=>s+i.value,0) * mult;
+      const fixed    = (md[fixedKey]||[]).reduce((s,i)=>s+i.value,0);
+      const daily    = (md[dailyKey]||[]).reduce((s,i)=>s+i.value,0);
+      const salary   = (md.income||[]).find(i=>i.name.toLowerCase().includes('salario'))?.value || (md.income||[])[0]?.value || 0;
+      const save42   = Math.round(salary * mult * (savingsPct/100));
+      const balance  = income - fixed - daily - save42;
+      const hasData  = md.income.length || md[fixedKey].length || md[dailyKey].length;
+      const isCur    = m === now.getMonth() && activeYear === now.getFullYear();
+      const isActive = m === activeMonth && activeYear === activeYear;
+
+      const card = document.createElement('div');
+      card.className = `month-card glass${isCur ? ' current-month' : ''}${isActive ? ' active-month' : ''}`;
+      card.innerHTML = `
+        <div class="mc-name">${MONTH_SHORT[m]}</div>
+        <div class="mc-balance ${!hasData ? 'zero' : balance >= 0 ? 'pos' : 'neg'}">
+          ${!hasData ? '—' : fmt(balance)}
+        </div>`;
+      card.onclick = () => selectMonth(m);
+      grid.appendChild(card);
+    }
+  }
+
+  function selectMonth(m) {
+    const prevMonth = activeMonth;
+    activeMonth = m;
+
+    // Copy income + fixed from previous month if new month is empty
+    const newMd  = getMonth(activeYear, m);
+    const prevMd = getMonth(activeYear, prevMonth);
+    const isEmpty = !newMd.income.length && !newMd.fixed_monthly.length && !newMd.fixed_q11.length && !newMd.fixed_q26.length;
+
+    if (isEmpty && (prevMd.income.length || prevMd.fixed_monthly.length)) {
+      newMd.income        = JSON.parse(JSON.stringify(prevMd.income));
+      newMd.fixed_monthly = JSON.parse(JSON.stringify(prevMd.fixed_monthly));
+      newMd.fixed_q11     = JSON.parse(JSON.stringify(prevMd.fixed_q11));
+      newMd.fixed_q26     = JSON.parse(JSON.stringify(prevMd.fixed_q26));
+      // Reset paid status
+      [...newMd.fixed_monthly, ...newMd.fixed_q11, ...newMd.fixed_q26].forEach(i => i.paid = false);
+    }
+
+    saveAll();
+    updateAll();
+    renderCalendar();
+    // Go back to dashboard
+    goTo('dashboard');
+    document.getElementById('currentMonth').textContent = MONTH_NAMES[m] + ' ' + activeYear;
+  }
+
+  // ── UPDATE ALL ────────────────────────────────────────────────────
+  function updateAll() {
+    updateIncome();
+    updateFixed();
+    updateDaily();
+    updateSummary();
+    updateFreeMoney();
+    updateProjection42();
+    if (currentSection === 'gastos') updateGastos();
+  }
+
+  function updateIncome() {
+    const items = cur().income || [];
+    const total = items.reduce((s,i)=>s+i.value,0);
+    document.getElementById('incomeTotal').textContent = fmt(total);
+    const list = document.getElementById('incomeList');
+    if (!items.length) { list.innerHTML = '<div class="empty-state"><div class="e-icon">💵</div>Sin ingresos</div>'; return; }
+    list.innerHTML = items.map((item,i) => `
+      <div class="item">
+        <span class="item-name">${item.name}</span>
+        <span class="item-amount" style="color:var(--green);">${fmt(item.value)}</span>
+        <button class="btn-icon edit" onclick="editItem('income',${i})">✏️</button>
+        <button class="btn-icon delete" onclick="deleteItem('income',${i})">🗑️</button>
+      </div>`).join('');
+  }
+
+  function updateGastos() {
+    const { fixedKey, dailyKey } = getPeriodKeys();
+    const lbl = document.getElementById('gastos-period-lbl');
+    if (lbl) lbl.textContent = getPeriodLabel();
+
+    // Fixed in gastos
+    const fItems = cur()[fixedKey] || [];
+    const fTotal = fItems.filter(i=>!i.paid).reduce((s,i)=>s+i.value,0);
+    document.getElementById('gastosFixedTotal').textContent = fmt(fTotal);
+    const fl = document.getElementById('gastosFixedList');
+    fl.innerHTML = !fItems.length
+      ? '<div class="empty-state"><div class="e-icon">📋</div>Sin gastos fijos para este periodo</div>'
+      : fItems.map((item,i) => `
+        <div class="item">
+          <button class="paid-check ${item.paid?'checked':'unchecked'}" onclick="togglePaid('${fixedKey}',${i});updateGastos()">✓</button>
+          <span class="item-name${item.paid?' paid':''}">${item.name}</span>
+          <span class="item-amount${item.paid?' paid':''}" style="color:var(--red);">${fmt(item.value)}</span>
+          <button class="btn-icon edit" onclick="editItem('fixed',${i})">✏️</button>
+          <button class="btn-icon delete" onclick="deleteItem('fixed',${i})">🗑️</button>
+        </div>`).join('');
+
+    // Daily in gastos
+    const dItems = cur()[dailyKey] || [];
+    const dTotal = dItems.reduce((s,i)=>s+i.value,0);
+    document.getElementById('gastosDailyTotal').textContent = fmt(dTotal);
+    const dl = document.getElementById('gastosDailyList');
+    dl.innerHTML = !dItems.length
+      ? '<div class="empty-state"><div class="e-icon">🛒</div>Sin gastos diarios para este periodo</div>'
+      : dItems.map((item,i) => `
+        <div class="item">
+          <span class="item-name">${item.name}</span>
+          <span class="item-amount" style="color:var(--yellow);">${fmt(item.value)}</span>
+          <button class="btn-icon edit" onclick="editItem('daily',${i})">✏️</button>
+          <button class="btn-icon delete" onclick="deleteItem('daily',${i})">🗑️</button>
+        </div>`).join('');
+  }
+
+  function updateFixed() {
+    const { fixedKey } = getPeriodKeys();
+    const items = cur()[fixedKey] || [];
+    const total = items.filter(i=>!i.paid).reduce((s,i)=>s+i.value,0);
+    document.getElementById('fixedTotal').textContent = fmt(total);
+    const lbl = document.getElementById('fixed-period-lbl');
+    if (lbl) lbl.textContent = getPeriodLabel();
+    const list = document.getElementById('fixedList');
+    if (!items.length) { list.innerHTML = '<div class="empty-state"><div class="e-icon">📋</div>Sin gastos fijos para este periodo</div>'; return; }
+    list.innerHTML = items.map((item,i) => `
+      <div class="item">
+        <button class="paid-check ${item.paid ? 'checked' : 'unchecked'}" onclick="togglePaid('${fixedKey}',${i})">✓</button>
+        <span class="item-name${item.paid ? ' paid' : ''}">${item.name}</span>
+        <span class="item-amount${item.paid ? ' paid' : ''}" style="color:var(--red);">${fmt(item.value)}</span>
+        <button class="btn-icon edit" onclick="editItem('fixed',${i})">✏️</button>
+        <button class="btn-icon delete" onclick="deleteItem('fixed',${i})">🗑️</button>
+      </div>`).join('');
+  }
+
+  function updateDaily() {
+    const { dailyKey } = getPeriodKeys();
+    const items = cur()[dailyKey] || [];
+    const total = items.reduce((s,i)=>s+i.value,0);
+    document.getElementById('dailyTotal').textContent = fmt(total);
+    const lbl = document.getElementById('daily-period-lbl');
+    if (lbl) lbl.textContent = getPeriodLabel();
+    const list = document.getElementById('dailyList');
+    if (!items.length) { list.innerHTML = '<div class="empty-state"><div class="e-icon">🛒</div>Sin gastos diarios para este periodo</div>'; return; }
+    list.innerHTML = items.map((item,i) => `
+      <div class="item">
+        <span class="item-name">${item.name}</span>
+        <span class="item-amount" style="color:var(--yellow);">${fmt(item.value)}</span>
+        <button class="btn-icon edit" onclick="editItem('daily',${i})">✏️</button>
+        <button class="btn-icon delete" onclick="deleteItem('daily',${i})">🗑️</button>
+      </div>`).join('');
+  }
+
+  function togglePaid(key, index) {
+    const item = cur()[key][index];
+    if (item) { item.paid = !item.paid; saveAll(); updateFixed(); updateSummary(); updateFreeMoney(); }
+  }
+
+  function updateSummary() {
+    const { mult } = getPeriodFactor();
+    const { fixedKey, dailyKey } = getPeriodKeys();
+    const d = cur();
+    const totalIncome   = (d.income||[]).reduce((s,i)=>s+i.value,0) * mult;
+    const totalFixed    = (d[fixedKey]||[]).filter(i=>!i.paid).reduce((s,i)=>s+i.value,0);
+    const totalDaily    = (d[dailyKey]||[]).reduce((s,i)=>s+i.value,0);
+    const totalExpenses = totalFixed + totalDaily;
+    const balance       = totalIncome - totalExpenses;
+    const salary        = (d.income||[]).find(i=>i.name.toLowerCase().includes('salario'))?.value || (d.income||[])[0]?.value || 0;
+    const save42        = Math.round(salary * mult * (savingsPct/100));
+    document.getElementById('totalIncome').textContent      = fmt(totalIncome);
+    document.getElementById('totalExpenses').textContent    = fmt(totalExpenses);
+    document.getElementById('monthlySavings').textContent   = fmt(Math.max(0,balance));
+    document.getElementById('savings42Percent').textContent = fmt(save42);
+    document.getElementById('hdr-balance').textContent      = (balance>=0?'+':'') + fmt(balance);
+  }
+
+  function updateFreeMoney() {
+    const { mult, label } = getPeriodFactor();
+    const { fixedKey, dailyKey } = getPeriodKeys();
+    const d = cur();
+    const totalIncome = (d.income||[]).reduce((s,i)=>s+i.value,0) * mult;
+    const totalFixed  = (d[fixedKey]||[]).filter(i=>!i.paid).reduce((s,i)=>s+i.value,0);
+    const totalDaily  = (d[dailyKey]||[]).reduce((s,i)=>s+i.value,0);
+    const salary      = (d.income||[]).find(i=>i.name.toLowerCase().includes('salario'))?.value || (d.income||[])[0]?.value || 0;
+    const save42      = Math.round(salary * mult * (savingsPct/100));
+    const freeMoney   = totalIncome - totalFixed - totalDaily - save42;
+
+    const badge = document.getElementById('hero-period-badge');
+    if (globalPeriod !== 'monthly') { badge.style.display='inline-flex'; badge.textContent='📆 ' + label; }
+    else badge.style.display = 'none';
+
+    const el   = document.getElementById('freeMoneyAmount');
+    const sub  = document.getElementById('freeMoneySub');
+    const hero = document.getElementById('heroCard');
+    el.textContent = fmt(freeMoney);
+    if (freeMoney < 0) {
+      el.style.color = '#ff0000'; sub.textContent = '⚠️ Déficit — ajusta gastos o meta';
+      hero.style.background = 'linear-gradient(145deg,rgba(255,59,48,0.22),rgba(255,59,48,0.08))';
+    } else if (freeMoney < 100000) {
+      el.style.color = '#ff7300'; sub.textContent = '⚠️ Poco margen — cuidado con extras';
+      hero.style.background = 'linear-gradient(145deg,rgba(255,204,0,0.2),rgba(255,149,0,0.08))';
+    } else {
+      el.style.color = '#34c759';
+      sub.textContent = `✅ ${label} · después de gastos y ahorro ${savingsPct}%`;
+      hero.style.background = 'linear-gradient(145deg,rgba(52,199,89,0.22),rgba(0,122,255,0.15),rgba(175,82,222,0.1))';
+    }
+    document.getElementById('breakdownIncome').textContent  = fmt(totalIncome);
+    document.getElementById('breakdownFixed').textContent   = '-' + fmt(totalFixed);
+    document.getElementById('breakdownDaily').textContent   = '-' + fmt(totalDaily);
+    document.getElementById('breakdownSavings').textContent = '-' + fmt(save42);
+    const freeEl = document.getElementById('breakdownFree');
+    freeEl.textContent = fmt(freeMoney);
+    freeEl.style.color = freeMoney < 0 ? 'var(--red)' : freeMoney < 100000 ? 'var(--yellow)' : 'var(--green)';
+  }
+
+  function updateProjection42() {
+    const pct    = savingsPct;
+    const { mult } = getPeriodFactor();
+    const { fixedKey: fk, dailyKey: dk } = getPeriodKeys();
+    const d      = cur();
+    const salary = (d.income||[]).find(i=>i.name.toLowerCase().includes('salario'))?.value || (d.income||[])[0]?.value || 0;
+    const periodIncome = Math.round((d.income||[]).reduce((s,i)=>s+i.value,0) * mult);
+    const periodFixed  = (d[fk]||[]).filter(i=>!i.paid).reduce((s,i)=>s+i.value,0);
+    const periodDaily  = (d[dk]||[]).reduce((s,i)=>s+i.value,0);
+    const periodReal   = periodIncome - periodFixed - periodDaily;
+    const saveTarget   = Math.round(salary * (pct/100));
+    const periodSave   = Math.round(saveTarget * mult);
+    const difference   = periodSave - periodReal;
+    const isBiweekly   = globalPeriod !== 'monthly';
+    const periodLabel  = isBiweekly ? 'Quincenal' : 'Mensual';
+
+    document.getElementById('savingsPctInput').value = pct;
+    document.getElementById('savingsPctSlider').value = pct;
+    document.getElementById('proj-pct-badge').textContent = `🎯 Meta · ${pct}% del Salario`;
+    document.getElementById('pct-info-label').textContent = pct + '%';
+    document.getElementById('salaryBase').textContent          = fmt(isBiweekly ? Math.round(salary/2) : salary);
+    document.getElementById('salaryBaseLbl').textContent       = isBiweekly ? 'Salario Quincenal' : 'Salario Mensual';
+    document.getElementById('monthlySave42').textContent       = fmt(periodSave);
+    document.getElementById('monthlySave42Lbl').textContent    = `Ahorro ${periodLabel}`;
+    document.getElementById('yearlySave42').textContent        = fmt(saveTarget * 12);
+    document.getElementById('projection6Months42').textContent = fmt(saveTarget * 6);
+    document.getElementById('projection1Year42').textContent   = fmt(saveTarget * 12);
+    document.getElementById('idealSave42').textContent         = fmt(periodSave);
+    document.getElementById('idealSave42Lbl').textContent      = `Ahorro ideal ${periodLabel.toLowerCase()}`;
+    document.getElementById('realSave42').textContent          = fmt(periodReal);
+    document.getElementById('realSave42Lbl').textContent       = `Ahorro real ${periodLabel.toLowerCase()}`;
+    document.getElementById('difference42').textContent        = fmt(Math.abs(difference));
+    document.getElementById('realSave42').style.color          = periodReal >= periodSave ? 'var(--green)' : periodReal >= 0 ? 'var(--yellow)' : 'var(--red)';
+    document.getElementById('difference42').style.color        = difference <= 0 ? 'var(--green)' : 'var(--red)';
+
+    const statusEl = document.getElementById('status42');
+    if (periodReal >= periodSave)       { statusEl.textContent='✅ Meta alcanzada'; statusEl.className='proj-cmp-val pos'; }
+    else if (periodReal >= periodSave*.7){ statusEl.textContent='⚠️ Cerca de la meta'; statusEl.className='proj-cmp-val warn'; }
+    else                                 { statusEl.textContent='❌ Debajo de la meta'; statusEl.className='proj-cmp-val neg'; }
+
+    const bk = document.getElementById('biweekly-breakdown');
+    if (isBiweekly) {
+      bk.style.display = 'block';
+      document.getElementById('bw-income').textContent = fmt(periodIncome);
+      document.getElementById('bw-fixed').textContent  = '-' + fmt(periodFixed);
+      document.getElementById('bw-daily').textContent  = '-' + fmt(periodDaily);
+      document.getElementById('bw-save').textContent   = '-' + fmt(periodSave);
+      const bwFree = periodIncome - periodFixed - periodDaily - periodSave;
+      document.getElementById('bw-free').textContent   = fmt(bwFree);
+      document.getElementById('bw-free').style.color   = bwFree < 0 ? 'var(--red)' : bwFree < 50000 ? 'var(--yellow)' : 'var(--green)';
+    } else { bk.style.display = 'none'; }
+
+    const recEl = document.getElementById('recommendations42');
+    const getTopExpenses = () => [...(d[fk]||[]), ...(d[dk]||[])].sort((a,b)=>b.value-a.value).slice(0,3).map(e=>e.name).join(', ') || 'gastos fijos';
+    if (periodReal < periodSave) {
+      recEl.innerHTML = `<p style="color:var(--red);margin-bottom:9px;font-size:0.83rem;font-weight:700;">⚠️ Déficit de ${fmt(periodSave-periodReal)} para el ${pct}%</p><ul style="color:var(--text2);font-size:0.8rem;line-height:1.8;padding-left:17px;"><li>Reduce gastos en: ${getTopExpenses()}</li><li>Considera ingresos adicionales</li></ul>`;
+    } else {
+      recEl.innerHTML = `<p style="color:var(--green);margin-bottom:9px;font-size:0.83rem;font-weight:700;">🎉 ¡Cumpliendo la meta del ${pct}%!</p><ul style="color:var(--text2);font-size:0.8rem;line-height:1.8;padding-left:17px;"><li>Mantén este ritmo de ahorro</li><li>Considera inversiones a largo plazo</li></ul>`;
+    }
+  }
+
+  function updatePct(val) {
+    const n = parseInt(val);
+    if (isNaN(n) || n < 1 || n > 100) return;
+    savingsPct = n;
+    saveAll(); updateAll();
+  }
+
+  // ── MODAL ─────────────────────────────────────────────────────────
+  function openModal(type) {
+    const titles = { income:'Agregar Ingreso', fixed:'Agregar Gasto Fijo', daily:'Agregar Gasto Diario' };
+    document.getElementById('modalTitle').textContent = titles[type];
+    document.getElementById('itemType').value  = type;
+    document.getElementById('itemIndex').value = '-1';
+    document.getElementById('itemName').value  = '';
+    document.getElementById('itemValue').value = '';
+    document.getElementById('modal').classList.add('active');
+    setTimeout(() => document.getElementById('itemName').focus(), 350);
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
+  function editItem(type, index) {
+    const key  = resolveKey(type);
+    const item = (cur()[key]||[])[index];
+    if (!item) return;
+    const titles = { income:'Editar Ingreso', fixed:'Editar Gasto Fijo', daily:'Editar Gasto Diario' };
+    document.getElementById('modalTitle').textContent = titles[type];
+    document.getElementById('itemType').value  = type;
+    document.getElementById('itemIndex').value = index;
+    document.getElementById('itemName').value  = item.name;
+    document.getElementById('itemValue').value = item.value;
+    document.getElementById('modal').classList.add('active');
+  }
+
+  function deleteItem(type, index) {
+    if (!confirm('¿Eliminar este item?')) return;
+    const key = resolveKey(type);
+    (cur()[key]||[]).splice(index, 1);
+    saveAll(); updateAll();
+  }
+
+  function saveItem(e) {
+    e.preventDefault();
+    const type  = document.getElementById('itemType').value;
+    const name  = document.getElementById('itemName').value.trim();
+    const value = parseInt(document.getElementById('itemValue').value) || 0;
+    const index = parseInt(document.getElementById('itemIndex').value);
+    const key   = resolveKey(type);
+    if (!cur()[key]) cur()[key] = [];
+    const item  = { name, value, date: new Date().toLocaleDateString('es-CO') };
+    if (index >= 0) cur()[key][index] = { ...cur()[key][index], ...item };
+    else cur()[key].push(item);
+    saveAll(); closeModal(); updateAll();
+  }
+
+  document.getElementById('modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal')) closeModal();
+  });
+
+  // ── INIT ──────────────────────────────────────────────────────────
+  loadAll();
+  applyTheme();
+
+  // Set period nav label
+  const pLabels = { monthly:'Mensual', q11:'Quincena 11', q26:'Quincena 26' };
+  document.getElementById('nav-per').textContent = pLabels[globalPeriod];
+  ['monthly','q11','q26'].forEach(k => {
+    document.getElementById('pm-check-' + k).style.opacity = k === globalPeriod ? '1' : '0';
+    document.getElementById('pm-' + k).classList.toggle('active', k === globalPeriod);
+  });
+
+  document.getElementById('currentMonth').textContent = MONTH_NAMES[activeMonth] + ' ' + activeYear;
+  updateAll();
+
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado', reg))
+        .catch(err => console.log('Error al registrar SW', err));
+    });
+  }
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./sw.js').then(function(registration) {
+        console.log('ServiceWorker registrado con éxito');
+      }, function(err) {
+        console.log('Error en ServiceWorker', err);
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
