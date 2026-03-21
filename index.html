@@ -29,6 +29,7 @@
        MODO OSCURO - iOS 26 (Futurista, Translúcido, Neón)
        ═══════════════════════════════════════════════════════════════ */
     body.dark {
+      background:#000000 !important;
       --bg:#050508;
       --surface:rgba(255,255,255,0.06);
       --surface2:rgba(255,255,255,0.03);
@@ -66,6 +67,7 @@
        MODO CLARO - iOS 6 (Skeuomorfismo, Texturas, Colores cálidos)
        ═══════════════════════════════════════════════════════════════ */
     body.light {
+      background:#e8e4dc !important;
       /* Fondo texturizado iOS 6 - lino/beige */
       --bg:#e8e4dc;
       --surface:#f5f3ef;
@@ -114,11 +116,12 @@
       --purple:#6b2c91;
     }
 
-    html { height:100%; }
-    body {
-      font-family:var(--font); min-height:100dvh; background:var(--bg);
-      color:var(--text); padding-bottom:90px; overflow-x:hidden;
-      transition:background 0.3s, color 0.3s;
+    html { height:100%; background:#000000; }
+body {
+  font-family:var(--font); min-height:100dvh; background:var(--bg);
+  color:var(--text); padding-bottom:90px; overflow-x:hidden;
+  transition:background 0.3s, color 0.3s;
+}
     }
 
     /* ── BACKGROUND ORBS ── */
