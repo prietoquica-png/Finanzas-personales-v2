@@ -1876,6 +1876,38 @@ function openModalWithKeyboardFix(type) {
     });
   }
 </script>
-
+<script>
+  // Forzar actualización del Service Worker en cada carga
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) {
+        registration.update();
+      }
+    });
+    
+    // Registrar Service Worker con opción de actualización
+    navigator.serviceWorker.register('./sw.js').then(function(registration) {
+      console.log('Service Worker registrado con éxito');
+      
+      // Verificar si hay una nueva versión cada vez que se abre
+      registration.update();
+      
+      // Escuchar cuando hay una nueva versión
+      registration.onupdatefound = function() {
+        const newWorker = registration.installing;
+        newWorker.onstatechange = function() {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // Nueva versión disponible, recargar automáticamente
+            if (confirm('¡Nueva versión disponible! ¿Recargar para actualizar?')) {
+              window.location.reload();
+            }
+          }
+        };
+      };
+    }).catch(function(err) {
+      console.log('Error al registrar SW', err);
+    });
+  }
+</script>
 </body>
 </html>
